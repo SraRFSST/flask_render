@@ -1,3 +1,4 @@
+# Render-Demo-Server
 Dieses Projekt wird auf http://render.com gehostet.
 
 Dazu wird das GitHub-Repo dort bei Änderungen deployed und ist verfügbar unter:
@@ -12,3 +13,6 @@ Für Render wird `gunicorn` benötigt
 ## Zugriff
 https://flask-render-yjoh.onrender.com/hallo  
 (`hallo` ist die Route)
+
+## Deployen
+Wenn Änderungen gemacht werden, diese auf GitHub pushen und manuell auf render Deployen.
