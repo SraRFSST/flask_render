@@ -2,6 +2,19 @@ from flask import Flask
 
 app = Flask(__name__)
 
+@app.route('/')
+def home():
+    return '''
+    <html>
+        <head>
+            <title>Flask-Backend-Experience</title>
+        </head>
+        <body>
+            <a href="hallo">Versuche jetzt auch die Route /hallo</a>
+        </body>
+    </html>
+    '''
+
 @app.route('/hallo')
 def hallo():
     return '''
