@@ -46,7 +46,19 @@ def get_users():
     finally:
         session.close()
 
+@app.route('/debug_db')
+def debug_db():
+    try:
+        # Überprüfen, ob die Verbindung zur Datenbank funktioniert
+        conn = engine.connect()
+        # Tabellen auflisten
+        tables = conn.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';").fetchall()
+        return {"tables": [table[0] for table in tables]}
+    except Exception as e:
+        return {"error": str(e)}
+
 if __name__ == '__main__':
     # Stelle sicher, dass die Tabelle existiert
     Base.metadata.create_all(engine)
     app.run(host='0.0.0.0', port=5000)
+
