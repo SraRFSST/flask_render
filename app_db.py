@@ -66,6 +66,13 @@ def create_users_table():
     except Exception as e:
         return {"error": str(e)}
 
+@app.route('/list_users', methods=['GET'])
+def list_users():
+    try:
+        users = session.query(User).all()
+        return jsonify([{"id": user.id, "name": user.name, "email": user.email} for user in users])
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 if __name__ == '__main__':
     # Stelle sicher, dass die Tabelle existiert
