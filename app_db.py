@@ -57,6 +57,16 @@ def debug_db():
     except Exception as e:
         return {"error": str(e)}
 
+@app.route('/create_users_table')
+def create_users_table():
+    try:
+        # Tabelle explizit erstellen
+        Base.metadata.create_all(engine)
+        return {"message": "Tabelle 'users' erfolgreich erstellt!"}
+    except Exception as e:
+        return {"error": str(e)}
+
+
 if __name__ == '__main__':
     # Stelle sicher, dass die Tabelle existiert
     Base.metadata.create_all(engine)
