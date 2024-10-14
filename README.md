@@ -11,8 +11,8 @@ Build Command: `pip install -r requirements.txt`
 Start Command : `gunicorn app:app`  
 Für Render wird `gunicorn` benötigt  
 ## Zugriff
-https://flask-render-yjoh.onrender.com/hallo  
-(`hallo` ist die Route)
+https://flask-render-yjoh.onrender.com  
+(Routes: `/` oder `hallo`)
 
 ## Deployen
 Wenn Änderungen gemacht werden, diese auf GitHub pushen und manuell auf render Deployen.
