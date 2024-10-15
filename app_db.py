@@ -134,6 +134,16 @@ def check_columns():
     except Exception as e:
         return {"error": str(e)}
 
+@app.route('/check_connection')
+def check_connection():
+    try:
+        # Überprüft, zu welcher Datenbank die Verbindung besteht
+        conn = engine.connect()
+        result = conn.execute(text("SELECT current_database();")).fetchone()
+        return {"database": result[0]}
+    except Exception as e:
+        return {"error": str(e)}
+
 
 # Startpunkt der App
 if __name__ == '__main__':
