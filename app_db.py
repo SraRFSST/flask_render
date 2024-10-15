@@ -93,6 +93,16 @@ def debug_columns():
     except Exception as e:
         return {"error": str(e)}
 
+# Route zum Auflisten aller Benutzer
+@app.route('/list_users', methods=['GET'])
+def list_users():
+    try:
+        users = session.query(User).all()  # Alle Benutzer abfragen
+        return jsonify([{"id": user.id, "name": user.name, "password_hash": user.password_hash} for user in users]), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    finally:
+        session.remove()  # Session am Ende entfernen
 
 # Startpunkt der App
 if __name__ == '__main__':
