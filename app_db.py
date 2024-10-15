@@ -2,11 +2,12 @@ from flask import Flask, request, jsonify
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
+import bcrypt
 
 app = Flask(__name__)
 
 # Datenbank-Verbindung konfigurieren
-DATABASE_URL = "postgresql+pg8000://roman:iNC3sEhZkLR16BcyYjYG8WBPX25hv4Hc@dpg-cs6knaij1k6c73a5uqi0-a:5432/accessdata"
+DATABASE_URL = "postgresql+pg8000://roman:PASSWORD@HOST:5432/accessdata"
 engine = create_engine(DATABASE_URL)
 
 # Session konfigurieren
@@ -22,7 +23,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
-    email = Column(String, nullable=False)
+    password_hash = Column(String, nullable=False)  # Speichert den Passwort-Hash
 
 # Route zum Erstellen der Tabelle
 @app.route('/create_users_table')
@@ -33,12 +34,16 @@ def create_users_table():
     except Exception as e:
         return {"error": str(e)}
 
-# Route zum Hinzufügen eines Benutzers
+# Route zum Hinzufügen eines Benutzers mit Passwort-Hashing
 @app.route('/add_user', methods=['POST'])
 def add_user():
     data = request.get_json()
     try:
-        new_user = User(name=data['name'], email=data['email'])
+        # Passwort hashen
+        password = data['password'].encode('utf-8')
+        password_hash = bcrypt.hashpw(password, bcrypt.gensalt())
+
+        new_user = User(name=data['name'], password_hash=password_hash.decode('utf-8'))
         session.add(new_user)
         session.commit()
         return jsonify({"message": "User added successfully!"}), 201
@@ -48,12 +53,27 @@ def add_user():
     finally:
         session.remove()  # Session am Ende entfernen
 
-# Route zum Auflisten aller Benutzer
+# Route zum Überprüfen eines Benutzernamens und Passworts
+@app.route('/verify_user', methods=['POST'])
+def verify_user():
+    data = request.get_json()
+    try:
+        user = session.query(User).filter_by(name=data['name']).first()
+        if user and bcrypt.checkpw(data['password'].encode('utf-8'), user.password_hash.encode('utf-8')):
+            return jsonify({"message": "Login successful!"}), 200
+        else:
+            return jsonify({"message": "Invalid username or password"}), 401
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    finally:
+        session.remove()  # Session am Ende entfernen
+
+# Route zum Auflisten aller Benutzer (nur für Debugging)
 @app.route('/list_users', methods=['GET'])
 def list_users():
     try:
         users = session.query(User).all()
-        return jsonify([{"id": user.id, "name": user.name, "email": user.email} for user in users])
+        return jsonify([{"id": user.id, "name": user.name} for user in users])
     except Exception as e:
         return jsonify({"error": str(e)}), 400
     finally:
