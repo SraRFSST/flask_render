@@ -2,8 +2,6 @@ from flask import Flask, request, jsonify
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
-from sqlalchemy import text
-
 import bcrypt
 
 app = Flask(__name__)
@@ -31,7 +29,7 @@ class User(Base):
 @app.route('/create_users_table')
 def create_users_table():
     try:
-        Base.metadata.create_all(engine)
+        Base.metadata.create_all(engine)  # Erstellen der Tabelle
         return {"message": "Tabelle 'users' erfolgreich erstellt!"}
     except Exception as e:
         return {"error": str(e)}
@@ -55,97 +53,41 @@ def add_user():
     finally:
         session.remove()  # Session am Ende entfernen
 
-# Route zum Überprüfen eines Benutzernamens und Passworts
-@app.route('/verify_user', methods=['POST'])
-def verify_user():
-    data = request.get_json()
+# Route zum Hinzufügen einer Spalte 'pwh'
+@app.route('/add_pwh_column')
+def add_pwh_column():
     try:
-        user = session.query(User).filter_by(name=data['name']).first()
-        if user and bcrypt.checkpw(data['password'].encode('utf-8'), user.pwh.encode('utf-8')):
-            return jsonify({"message": "Login successful!"}), 200
-        else:
-            return jsonify({"message": "Invalid username or password"}), 401
+        session.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS pwh VARCHAR;")
+        session.commit()
+        return {"message": "Spalte 'pwh' erfolgreich hinzugefügt!"}
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        session.rollback()
+        return {"error": str(e)}
     finally:
         session.remove()  # Session am Ende entfernen
 
-# Route zum Auflisten aller Benutzer (nur für Debugging)
-@app.route('/list_users', methods=['GET'])
-def list_users():
+# Route zum Löschen der Spalte 'email'
+@app.route('/drop_email_column')
+def drop_email_column():
     try:
-        users = session.query(User).all()
-        return jsonify([{"id": user.id, "name": user.name} for user in users])
+        session.execute("ALTER TABLE users DROP COLUMN IF EXISTS email;")
+        session.commit()
+        return {"message": "Spalte 'email' erfolgreich entfernt!"}
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        session.rollback()
+        return {"error": str(e)}
     finally:
         session.remove()  # Session am Ende entfernen
 
 # Debugging-Route, um Tabellen zu überprüfen
-@app.route('/debug_db')
-def debug_db():
-    try:
-        conn = engine.connect()
-        # Abfrage, um alle Tabellen im Schema 'public' zu erhalten
-        query = text("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';")
-        tables = conn.execute(query).fetchall()
-        return {"tables": [table[0] for table in tables]}
-    except Exception as e:
-        return {"error": str(e)}
-
 @app.route('/debug_columns')
 def debug_columns():
     try:
-        conn = engine.connect()
-        # Abfrage, um alle Spalten der Tabelle 'users' zu erhalten
-        query = text("SELECT column_name FROM information_schema.columns WHERE table_name = 'users';")
-        columns = conn.execute(query).fetchall()
+        columns = session.execute("SELECT column_name FROM information_schema.columns WHERE table_name = 'users';").fetchall()
         return {"columns": [column[0] for column in columns]}
     except Exception as e:
         return {"error": str(e)}
-
-@app.route('/drop_users_table')
-def drop_users_table():
-    try:
-        conn = engine.connect()
-        query = text("DROP TABLE IF EXISTS users;")
-        conn.execute(query)
-        session.commit()
-        return {"message": "Tabelle 'users' erfolgreich gelöscht!"}
-    except Exception as e:
-        return {"error": str(e)}
-
-@app.route('/add_pwh_column')
-def add_pwh_column():
-    try:
-        conn = engine.connect()
-        query = text("ALTER TABLE users ADD COLUMN pwh VARCHAR;")
-        conn.execute(query)
-        return {"message": "Spalte 'pwh' erfolgreich hinzugefügt!"}
-    except Exception as e:
-        return {"error": str(e)}
-
-@app.route('/check_columns')
-def check_columns():
-    try:
-        conn = engine.connect()
-        query = text("SELECT column_name FROM information_schema.columns WHERE table_name = 'users';")
-        columns = conn.execute(query).fetchall()
-        return {"columns": [column[0] for column in columns]}
-    except Exception as e:
-        return {"error": str(e)}
-
-@app.route('/check_connection')
-def check_connection():
-    try:
-        # Überprüft, zu welcher Datenbank die Verbindung besteht
-        conn = engine.connect()
-        result = conn.execute(text("SELECT current_database();")).fetchone()
-        return {"database": result[0]}
-    except Exception as e:
-        return {"error": str(e)}
-
 
 # Startpunkt der App
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)
