@@ -114,6 +114,17 @@ def drop_users_table():
     except Exception as e:
         return {"error": str(e)}
 
+@app.route('/add_password_hash_column')
+def add_password_hash_column():
+    try:
+        conn = engine.connect()
+        query = text("ALTER TABLE users ADD COLUMN password_hash VARCHAR;")
+        conn.execute(query)
+        return {"message": "Spalte 'password_hash' erfolgreich hinzugefügt!"}
+    except Exception as e:
+        return {"error": str(e)}
+
+
 # Startpunkt der App
 if __name__ == '__main__':
     app.run(debug=True)
