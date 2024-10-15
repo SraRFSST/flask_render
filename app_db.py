@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy import text
+
 import bcrypt
 
 app = Flask(__name__)
@@ -85,7 +87,8 @@ def debug_db():
     try:
         conn = engine.connect()
         # Abfrage, um alle Tabellen im Schema 'public' zu erhalten
-        tables = conn.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';").fetchall()
+        query = text("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';")
+        tables = conn.execute(query).fetchall()
         return {"tables": [table[0] for table in tables]}
     except Exception as e:
         return {"error": str(e)}
@@ -95,10 +98,12 @@ def debug_columns():
     try:
         conn = engine.connect()
         # Abfrage, um alle Spalten der Tabelle 'users' zu erhalten
-        columns = conn.execute("SELECT column_name FROM information_schema.columns WHERE table_name = 'users';").fetchall()
+        query = text("SELECT column_name FROM information_schema.columns WHERE table_name = 'users';")
+        columns = conn.execute(query).fetchall()
         return {"columns": [column[0] for column in columns]}
     except Exception as e:
         return {"error": str(e)}
+
 
 
 # Startpunkt der App
