@@ -124,6 +124,16 @@ def add_password_hash_column():
     except Exception as e:
         return {"error": str(e)}
 
+@app.route('/check_columns')
+def check_columns():
+    try:
+        conn = engine.connect()
+        query = text("SELECT column_name FROM information_schema.columns WHERE table_name = 'users';")
+        columns = conn.execute(query).fetchall()
+        return {"columns": [column[0] for column in columns]}
+    except Exception as e:
+        return {"error": str(e)}
+
 
 # Startpunkt der App
 if __name__ == '__main__':
