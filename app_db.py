@@ -4,6 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 import bcrypt
 from sqlalchemy import text
+from sqlalchemy.sql import text
 
 app = Flask(__name__)
 
@@ -54,18 +55,19 @@ def add_user():
     finally:
         session.remove()  # Session am Ende entfernen
 
-# Route zum Hinzufügen einer Spalte 'pwh'
+# Route zum Hinzufügen der Spalte pwh
 @app.route('/add_pwh_column')
 def add_pwh_column():
     try:
-        session.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS pwh VARCHAR;")
-        session.commit()
-        return {"message": "Spalte 'pwh' erfolgreich hinzugefügt!"}
+        conn = engine.connect()
+        # SQL-Befehl zum Hinzufügen der Spalte als Text deklarieren
+        conn.execute(text("ALTER TABLE users ADD COLUMN password_hash VARCHAR;"))
+        return {"message": "Spalte 'password_hash' erfolgreich hinzugefügt!"}
     except Exception as e:
-        session.rollback()
         return {"error": str(e)}
     finally:
-        session.remove()  # Session am Ende entfernen
+        conn.close()
+
 
 # Route zum Löschen der Spalte 'email'
 @app.route('/drop_email_column')
