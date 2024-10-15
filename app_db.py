@@ -84,7 +84,8 @@ def list_users():
 def debug_db():
     try:
         conn = engine.connect()
-        tables = conn.execute("SELECT users FROM information_schema.tables WHERE table_schema = 'public';").fetchall()
+        # Abfrage, um alle Tabellen im Schema 'public' zu erhalten
+        tables = conn.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';").fetchall()
         return {"tables": [table[0] for table in tables]}
     except Exception as e:
         return {"error": str(e)}
@@ -93,10 +94,12 @@ def debug_db():
 def debug_columns():
     try:
         conn = engine.connect()
+        # Abfrage, um alle Spalten der Tabelle 'users' zu erhalten
         columns = conn.execute("SELECT column_name FROM information_schema.columns WHERE table_name = 'users';").fetchall()
         return {"columns": [column[0] for column in columns]}
     except Exception as e:
         return {"error": str(e)}
+
 
 # Startpunkt der App
 if __name__ == '__main__':
