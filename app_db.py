@@ -110,6 +110,7 @@ def drop_users_table():
         conn = engine.connect()
         query = text("DROP TABLE IF EXISTS users;")
         conn.execute(query)
+        conn.execute("COMMIT;")
         return {"message": "Tabelle 'users' erfolgreich gelöscht!"}
     except Exception as e:
         return {"error": str(e)}
