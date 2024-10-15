@@ -104,7 +104,15 @@ def debug_columns():
     except Exception as e:
         return {"error": str(e)}
 
-
+@app.route('/drop_users_table')
+def drop_users_table():
+    try:
+        conn = engine.connect()
+        query = text("DROP TABLE IF EXISTS users;")
+        conn.execute(query)
+        return {"message": "Tabelle 'users' erfolgreich gelöscht!"}
+    except Exception as e:
+        return {"error": str(e)}
 
 # Startpunkt der App
 if __name__ == '__main__':
