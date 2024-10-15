@@ -104,13 +104,13 @@ def debug_columns():
     except Exception as e:
         return {"error": str(e)}
 
-@app.route('/drop_users_table', methods=['POST'])
+@app.route('/drop_users_table')
 def drop_users_table():
     try:
         conn = engine.connect()
         query = text("DROP TABLE IF EXISTS users;")
         conn.execute(query)
-        conn.execute("COMMIT;")
+        session.commit()
         return {"message": "Tabelle 'users' erfolgreich gelöscht!"}
     except Exception as e:
         return {"error": str(e)}
