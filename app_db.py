@@ -25,7 +25,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
-    password_hash = Column(String, nullable=False)  # Speichert den Passwort-Hash
+    pwh = Column(String, nullable=False)  # Speichert den Passwort-Hash
 
 # Route zum Erstellen der Tabelle
 @app.route('/create_users_table')
@@ -43,9 +43,9 @@ def add_user():
     try:
         # Passwort hashen
         password = data['password'].encode('utf-8')
-        password_hash = bcrypt.hashpw(password, bcrypt.gensalt())
+        pwh = bcrypt.hashpw(password, bcrypt.gensalt())
 
-        new_user = User(name=data['name'], password_hash=password_hash.decode('utf-8'))
+        new_user = User(name=data['name'], pwh=pwh.decode('utf-8'))
         session.add(new_user)
         session.commit()
         return jsonify({"message": "User added successfully!"}), 201
@@ -61,7 +61,7 @@ def verify_user():
     data = request.get_json()
     try:
         user = session.query(User).filter_by(name=data['name']).first()
-        if user and bcrypt.checkpw(data['password'].encode('utf-8'), user.password_hash.encode('utf-8')):
+        if user and bcrypt.checkpw(data['password'].encode('utf-8'), user.pwh.encode('utf-8')):
             return jsonify({"message": "Login successful!"}), 200
         else:
             return jsonify({"message": "Invalid username or password"}), 401
@@ -115,13 +115,13 @@ def drop_users_table():
     except Exception as e:
         return {"error": str(e)}
 
-@app.route('/add_password_hash_column')
-def add_password_hash_column():
+@app.route('/add_pwh_column')
+def add_pwh_column():
     try:
         conn = engine.connect()
-        query = text("ALTER TABLE users ADD COLUMN password_hash VARCHAR;")
+        query = text("ALTER TABLE users ADD COLUMN pwh VARCHAR;")
         conn.execute(query)
-        return {"message": "Spalte 'password_hash' erfolgreich hinzugefügt!"}
+        return {"message": "Spalte 'pwh' erfolgreich hinzugefügt!"}
     except Exception as e:
         return {"error": str(e)}
 
