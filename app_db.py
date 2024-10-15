@@ -98,7 +98,7 @@ def debug_columns():
 def list_users():
     try:
         users = session.query(User).all()  # Alle Benutzer abfragen
-        return jsonify([{"id": user.id, "name": user.name, "password_hash": user.password_hash} for user in users]), 200
+        return jsonify([{"id": user.id, "name": user.name, "password_hash": user.pwh} for user in users]), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
     finally:
