@@ -7,7 +7,7 @@ import bcrypt
 app = Flask(__name__)
 
 # Datenbank-Verbindung konfigurieren
-DATABASE_URL = "postgresql+pg8000://roman:PASSWORD@HOST:5432/accessdata"
+DATABASE_URL = "postgresql+pg8000://roman:iNC3sEhZkLR16BcyYjYG8WBPX25hv4Hc@dpg-cs6knaij1k6c73a5uqi0-a:5432/accessdata"
 engine = create_engine(DATABASE_URL)
 
 # Session konfigurieren
