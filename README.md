@@ -30,7 +30,7 @@ Wenn Änderungen gemacht werden, diese auf GitHub pushen und manuell auf render 
 
 
 # Anwendung mit DB
-Eine zweite Anwendung greift auf eine Datenbank zu, die ebenfalls auf `Render` gehostet wird.
+Eine zweite Anwendung `app_db.py` greift auf eine Datenbank zu, die ebenfalls auf `Render` gehostet wird.
 
 ## Installation Postgres
 für eine lokale Postgres-Installation:  
@@ -45,18 +45,22 @@ für eine lokale Postgres-Installation:
 auf `Render` kann eine PostgreSQL erzeugt werden. Die Einstellungen:  
 - Name: `backend_db`  
 - Port: `5432`  
-- Database: `accessdata`  
+- Database: `accessdata_jx7t` (wurde angepasst, weil schon vorh.)  
 - Username: `roman` 
 - Password: `8wyGMUqyvv3YR8WZ155c04H1PfuP1iHY` (wird erzeugt)
+- Host: `8wyGMUqyvv3YR8WZ155c04H1PfuP1iHY` (wird erzeugt)
 
 in Python wird installiert:   
-`pip install Flask sqlalchemy pg8000`
+`pip install Flask sqlalchemy pg8000`  
+damit ein neues `requirements_db.txt` erzeugt  
 
 ## Zugriff:
 - Erstellen der `users`-Tabelle (einmalig notwendig):  
-https://flask-db-71xi.onrender.com/create_users_table
+https://flask-db-71xi.onrender.com/create_users_table  
 - Zeigen der eingetragenen Namen:  
 https://flask-db-71xi.onrender.com/list_users
 - Eintragen eines Datensatzes (z.B. mit Curl):  
-`curl -X POST -H "Content-Type: application/json" -d "{\"name\":\"Jonmiller\",\"password_hash\":\"mysecret\"}" https://flask-db-71xi.onrender.com/add_user`
+`curl -X POST -H "Content-Type: application/json" -d "{\"name\":\"Jane Doe\",\"password\":\"su
+persecurepassword\"}" https://flask-db-71xi.onrender.com/add_user`
 
+beim Anzeigen der User wird ersichtlich - die Passwörter wurden als Hash abgelegt.

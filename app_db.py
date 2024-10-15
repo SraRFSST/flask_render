@@ -55,44 +55,6 @@ def add_user():
     finally:
         session.remove()  # Session am Ende entfernen
 
-# Route zum Hinzufügen der Spalte pwh
-@app.route('/add_pwh_column')
-def add_pwh_column():
-    try:
-        conn = engine.connect()
-        # SQL-Befehl zum Hinzufügen der Spalte als Text deklarieren
-        conn.execute(text("ALTER TABLE users ADD COLUMN password_hash VARCHAR;"))
-        return {"message": "Spalte 'password_hash' erfolgreich hinzugefügt!"}
-    except Exception as e:
-        return {"error": str(e)}
-    finally:
-        conn.close()
-
-
-# Route zum Löschen der Spalte 'email'
-@app.route('/drop_email_column')
-def drop_email_column():
-    try:
-        conn = engine.connect()
-        # Text muss explizit als text() deklariert werden
-        conn.execute(text("ALTER TABLE users DROP COLUMN IF EXISTS email;"))
-        conn.close()
-        return {"message": "Spalte 'email' erfolgreich entfernt!"}
-    except Exception as e:
-        return {"error": str(e)}
-
-# Debugging-Route, um Tabellen zu überprüfen
-@app.route('/debug_columns')
-def debug_columns():
-    try:
-        conn = engine.connect()
-        # Text muss explizit als text() deklariert werden
-        columns = conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name = 'users';")).fetchall()
-        conn.close()  # Schließe die Verbindung nach dem Abruf
-        return {"columns": [column[0] for column in columns]}
-    except Exception as e:
-        return {"error": str(e)}
-
 # Route zum Auflisten aller Benutzer
 @app.route('/list_users', methods=['GET'])
 def list_users():
