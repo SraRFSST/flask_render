@@ -9,7 +9,7 @@ from sqlalchemy.sql import text
 app = Flask(__name__)
 
 # Datenbank-Verbindung konfigurieren
-DATABASE_URL = "postgresql+pg8000://roman:iNC3sEhZkLR16BcyYjYG8WBPX25hv4Hc@dpg-cs6knaij1k6c73a5uqi0-a:5432/accessdata"
+DATABASE_URL = "postgresql+pg8000://roman:8wyGMUqyvv3YR8WZ155c04H1PfuP1iHY@dpg-cs7ac4lds78s73b9foj0-a:5432/accessdata"
 engine = create_engine(DATABASE_URL)
 
 # Session konfigurieren

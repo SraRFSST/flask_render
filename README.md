@@ -47,7 +47,7 @@ auf `Render` kann eine PostgreSQL erzeugt werden. Die Einstellungen:
 - Port: `5432`  
 - Database: `accessdata`  
 - Username: `roman` 
-- Password: `iNC3sEhZkLR16BcyYjYG8WBPX25hv4Hc` (wird erzeugt)
+- Password: `8wyGMUqyvv3YR8WZ155c04H1PfuP1iHY` (wird erzeugt)
 
 in Python wird installiert:   
 `pip install Flask sqlalchemy pg8000`
