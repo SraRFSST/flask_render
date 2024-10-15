@@ -83,10 +83,14 @@ def drop_email_column():
 @app.route('/debug_columns')
 def debug_columns():
     try:
-        columns = session.execute("SELECT column_name FROM information_schema.columns WHERE table_name = 'users';").fetchall()
+        conn = engine.connect()
+        # Text muss explizit als text() deklariert werden
+        columns = conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name = 'users';")).fetchall()
+        conn.close()  # Schließe die Verbindung nach dem Abruf
         return {"columns": [column[0] for column in columns]}
     except Exception as e:
         return {"error": str(e)}
+
 
 # Startpunkt der App
 if __name__ == '__main__':
