@@ -104,7 +104,7 @@ def debug_columns():
     except Exception as e:
         return {"error": str(e)}
 
-@app.route('/drop_users_table')
+@app.route('/drop_users_table', methods=['POST'])
 def drop_users_table():
     try:
         conn = engine.connect()
