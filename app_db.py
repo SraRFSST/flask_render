@@ -3,6 +3,7 @@ from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 import bcrypt
+from sqlalchemy import text
 
 app = Flask(__name__)
 
@@ -70,14 +71,13 @@ def add_pwh_column():
 @app.route('/drop_email_column')
 def drop_email_column():
     try:
-        session.execute("ALTER TABLE users DROP COLUMN IF EXISTS email;")
-        session.commit()
+        conn = engine.connect()
+        # Text muss explizit als text() deklariert werden
+        conn.execute(text("ALTER TABLE users DROP COLUMN IF EXISTS email;"))
+        conn.close()
         return {"message": "Spalte 'email' erfolgreich entfernt!"}
     except Exception as e:
-        session.rollback()
         return {"error": str(e)}
-    finally:
-        session.remove()  # Session am Ende entfernen
 
 # Debugging-Route, um Tabellen zu überprüfen
 @app.route('/debug_columns')
