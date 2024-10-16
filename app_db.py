@@ -40,22 +40,25 @@ def create_users_table():
 def login():
     data = request.get_json()
     try:
+        usr = data['name']
         # Passwort hashen
         password = data['password'].encode('utf-8')
-        usr = data['name'].encode('utf-8')
         pwh = bcrypt.hashpw(password, bcrypt.gensalt())
 
         user = session.query(User).filter_by(name=usr).first()
-        session.close()
+
         if user:
-            return jsonify({"message": "User" + usr + " vorhanden"}), 201
+            if bcrypt.checkpw(password, user.pwh.encode('utf-8')):
+                return jsonify({"message": f"User {usr} erfolgreich eingeloggt"}), 201
+            else:
+                return jsonify({"message": "Falsches Passwort"}), 401
         else:
-            return jsonify({"message": "User" + usr + " NICHT vorhanden"}), 400
+            return jsonify({"message": f"User {usr} nicht bekannt"}), 400
     except Exception as e:
         session.close()
         return jsonify({"error": str(e)}), 400
     finally:
-        session.remove()  # Session am Ende entfernen
+        session.close()  # Sicherstellen, dass Session geschlossen wird
 
 
 # Route zum Hinzufügen eines Benutzers mit Passwort-Hashing
