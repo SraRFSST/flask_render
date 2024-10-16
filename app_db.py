@@ -49,7 +49,8 @@ def login():
 
         if user:
             if bcrypt.checkpw(password, user.pwh.encode('utf-8')):
-                return jsonify({"message": f"User {usr} erfolgreich eingeloggt"}), 201
+                access_token = create_access_token(identity=usr)
+                return jsonify({"token":access_token, "message": f"User {usr} erfolgreich eingeloggt"}), 201
             else:
                 return jsonify({"message": "Falsches Passwort"}), 401
         else:
@@ -58,7 +59,7 @@ def login():
         session.close()
         return jsonify({"error": str(e)}), 400
     finally:
-        session.close()  # Sicherstellen, dass Session geschlossen wird
+        session.remove()  # Sicherstellen, dass Session geschlossen wird
 
 
 # Route zum Hinzufügen eines Benutzers mit Passwort-Hashing
