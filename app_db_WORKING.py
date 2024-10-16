@@ -36,28 +36,6 @@ def create_users_table():
     except Exception as e:
         return {"error": str(e)}
 
-@app.route('/login', methods=['POST'])
-def login():
-    data = request.get_json()
-    try:
-        # Passwort hashen
-        password = data['password'].encode('utf-8')
-        usr = data['name'].encode('utf-8')
-        pwh = bcrypt.hashpw(password, bcrypt.gensalt())
-
-        user = session.query(User).filter_by(username=usr).first()
-        session.close()
-        if user:
-            return jsonify({"message": "User" + usr + " vorhanden"}), 201
-        else:
-            return jsonify({"message": "User" + usr + " NICHT vorhanden"}), 400
-    except Exception as e:
-        session.close()
-        return jsonify({"error": str(e)}), 400
-    finally:
-        session.remove()  # Session am Ende entfernen
-
-
 # Route zum Hinzufügen eines Benutzers mit Passwort-Hashing
 @app.route('/add_user', methods=['POST'])
 def add_user():
@@ -87,8 +65,6 @@ def list_users():
         return jsonify({"error": str(e)}), 400
     finally:
         session.remove()  # Session am Ende entfernen
-
-
 
 # Startpunkt der App
 if __name__ == '__main__':

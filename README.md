@@ -33,7 +33,7 @@ Wenn Änderungen gemacht werden, diese auf GitHub pushen und manuell auf render 
 Eine zweite Anwendung `app_db.py` greift auf eine Datenbank zu, die ebenfalls auf `Render` gehostet wird.
 
 ## Installation Postgres
-für eine lokale Postgres-Installation:  
+für eine lokale Postgres-Installation (nicht notwendig):  
 - Download von https://www.enterprisedb.com/downloads/postgres-postgresql-downloads  
 - Installation mit Standard-Einstellungen  
   user (Admin) postgres  / roman
@@ -63,4 +63,4 @@ https://flask-db-71xi.onrender.com/list_users
 `curl -X POST -H "Content-Type: application/json" -d "{\"name\":\"Jane Doe\",\"password\":\"su
 persecurepassword\"}" https://flask-db-71xi.onrender.com/add_user`
 
-beim Anzeigen der User wird ersichtlich - die Passwörter wurden als Hash abgelegt.
+beim Anzeigen der User wird ersichtlich - die Passwörter wurden als Hash abgelegt. Weiters: wenn verschiedene User die gleichen Passwörter anlegen, dann haben sie einen verschiedenen Hash-Wert.
