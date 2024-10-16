@@ -1,11 +1,15 @@
 from flask import Flask, request, jsonify
 from flask_jwt_extended import create_access_token, JWTManager
+from flask_cors import CORS
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 import bcrypt
 
 app = Flask(__name__)
+
+# CORS für alle Routen und Domains aktivieren
+CORS(app)
 
 # Ein Geheimschlüssel wird für die JWT-Generierung benötigt
 app.config['JWT_SECRET_KEY'] = 'dein-geheimer-schluessel'  # Ersetze durch einen sicheren Schlüssel
