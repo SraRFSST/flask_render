@@ -45,7 +45,7 @@ def login():
         usr = data['name'].encode('utf-8')
         pwh = bcrypt.hashpw(password, bcrypt.gensalt())
 
-        user = session.query(User).filter_by(username=usr).first()
+        user = session.query(User).filter_by(name=usr).first()
         session.close()
         if user:
             return jsonify({"message": "User" + usr + " vorhanden"}), 201
