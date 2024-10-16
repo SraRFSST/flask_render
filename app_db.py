@@ -1,12 +1,17 @@
 from flask import Flask, request, jsonify
+from flask_jwt_extended import create_access_token, JWTManager
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 import bcrypt
-from sqlalchemy import text
-from sqlalchemy.sql import text
 
 app = Flask(__name__)
+
+# Ein Geheimschlüssel wird für die JWT-Generierung benötigt
+app.config['JWT_SECRET_KEY'] = 'dein-geheimer-schluessel'  # Ersetze durch einen sicheren Schlüssel
+
+# Initialisierung der JWT-Erweiterung
+jwt = JWTManager(app)
 
 # Datenbank-Verbindung konfigurieren
 DATABASE_URL = "postgresql+pg8000://roman:8wyGMUqyvv3YR8WZ155c04H1PfuP1iHY@dpg-cs7ac4lds78s73b9foj0-a:5432/accessdata_jx7t"
